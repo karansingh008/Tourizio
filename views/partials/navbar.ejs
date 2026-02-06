@@ -1,0 +1,61 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary-custom fixed-top">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <img src="/icons/Tourizio.png" alt="Logo" style="height: 35px; width: auto; margin-right: 8px;">
+            <strong>Tourizio</strong>
+        </a>
+        <button class="navbar-toggler" type="button" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="/">
+                        <img src="/icons/home-button.png" style="height: 20px; margin-right: 6px;"> Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="/destinations">
+                        <img src="/icons/destination.png" style="height: 20px; margin-right: 6px;"> Destinations
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="/booking">
+                        <img src="/icons/booking-online.png" style="height: 20px; margin-right: 6px;"> Book a Tour
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="/contact">
+                        <img src="/icons/phone.png" style="height: 20px; margin-right: 6px;"> Contact
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="/my-bookings">
+                        <img src="/icons/my booking.png" style="height: 20px; margin-right: 6px;"> My Bookings
+                    </a>
+                </li>
+                <% if(user) { %>
+                    <li class="nav-item dropdown ms-2">
+                        <a class="nav-link dropdown-toggle btn btn-sm btn-outline-light d-flex align-items-center"
+                            href="#" role="button" data-bs-toggle="dropdown">
+                            <img src="/icons/boy.png" style="height: 24px; margin-right: 6px; border-radius: 50%;">
+                            <%= user.firstName %>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
+                        </ul>
+                    </li>
+                    <% } else { %>
+                        <% if(currentPath !=='/auth' ) { %>
+                            <li class="nav-item ms-2"><a class="btn btn-light btn-login-nav d-flex align-items-center"
+                                    href="/auth">Login / Sign up</a></li>
+                            <% } %>
+                                <% } %>
+            </ul>
+        </div>
+    </div>
+</nav>

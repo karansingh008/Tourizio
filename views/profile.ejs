@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Tourizio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .profile-header {
+            background: linear-gradient(135deg, var(--deep-red), var(--saffron));
+            padding: 3rem 0;
+            color: white;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .profile-avatar-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1rem;
+            position: relative;
+        }
+
+        .profile-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background: white;
+        }
+
+        .avatar-edit-btn {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: var(--dark-brown);
+            color: white;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .avatar-edit-btn:hover {
+            transform: scale(1.1);
+            background: black;
+        }
+
+        .editable-field {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .edit-icon {
+            color: var(--saffron);
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .edit-icon:hover {
+            color: var(--deep-red);
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/navbar') %>
+
+        <div class="profile-header text-center mt-5 pt-5">
+            <div class="container">
+                <div class="profile-avatar-container">
+                    <img src="<%= user.profilePic || 'https://cdn-icons-png.flaticon.com/512/1077/1077114.png' %>"
+                        alt="Profile" class="profile-avatar" id="avatarPreview">
+                    <label for="avatarUpload" class="avatar-edit-btn">
+                        <i class="fas fa-camera"></i>
+                    </label>
+                    <input type="file" id="avatarUpload" hidden accept="image/*">
+                </div>
+                <h2>Hello, <%= user.firstName %>!</h2>
+                <p class="opacity-75">
+                    <%= user.email %>
+                </p>
+            </div>
+        </div>
+
+        <div class="container pb-5">
+            <div class="row justify-content-center">
+                <div class="col-md-7">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <h4 class="mb-4 text-deep-red border-bottom pb-2">Personal Details</h4>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-6">
+                                    <label class="form-label text-muted small">First Name</label>
+                                    <input type="text" class="form-control" value="<%= user.firstName %>" disabled
+                                        style="background-color: #f8f9fa;">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label text-muted small">Last Name</label>
+                                    <input type="text" class="form-control" value="<%= user.lastName %>" disabled
+                                        style="background-color: #f8f9fa;">
+                                </div>
+                            </div>
+
+                            <!-- Email Section -->
+                            <div class="mb-3">
+                                <label class="form-label text-muted small">Email Address</label>
+                                <div class="input-group">
+                                    <input type="email" class="form-control" value="<%= user.email %>" disabled
+                                        id="emailDisplay">
+                                    <span class="input-group-text bg-white">
+                                        <i class="fas fa-pencil-alt edit-icon" onclick="openEmailModal()"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Age Section -->
+                            <div class="mb-4">
+                                <label class="form-label text-muted small">Age</label>
+                                <div class="d-flex align-items-center justify-content-between p-2 border rounded"
+                                    id="ageDisplayContainer">
+                                    <span class="fw-bold" id="ageText">
+                                        <%= user.age ? user.age + ' Years' : 'Not Set' %>
+                                    </span>
+                                    <i class="fas fa-pencil-alt edit-icon" onclick="toggleAgeEdit()"></i>
+                                </div>
+
+                                <div class="input-group d-none" id="ageEditContainer">
+                                    <input type="number" class="form-control" id="ageInput"
+                                        value="<%= user.age || '' %>" placeholder="Enter Age" min="18" max="100">
+                                    <button class="btn btn-primary-custom" onclick="saveAge()">Save</button>
+                                    <button class="btn btn-outline-secondary" onclick="toggleAgeEdit()">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Update Modal -->
+        <div class="modal fade" id="emailModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Change Email Address</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Step 1: Init -->
+                        <div id="step1">
+                            <p class="text-muted">For security, we need to verify it's you. We will send an OTP to your
+                                <b>current</b> email address.
+                            </p>
+                            <div class="d-grid">
+                                <button class="btn btn-primary-custom" onclick="sendSecurityOTP()">
+                                    <i class="fas fa-paper-plane me-2"></i>Send OTP to <%= user.email %>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Verify -->
+                        <div id="step2" class="d-none">
+                            <div class="alert alert-warning py-2 small">
+                                <i class="fas fa-terminal me-1"></i> OTP sent! <b>Check Server Console</b>.
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Enter Verification Code</label>
+                                <input type="text" class="form-control text-center letter-spacing-2" id="otpInput"
+                                    maxlength="6" placeholder="000000">
+                            </div>
+                            <button class="btn btn-success w-100" onclick="verifyMyOTP()">Verify Identity</button>
+                        </div>
+
+                        <!-- Step 3: New Email -->
+                        <div id="step3" class="d-none">
+                            <div class="alert alert-info py-2 small">
+                                <i class="fas fa-lock-open me-1"></i> Identity Verified. Enter your new email.
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">New Email Address</label>
+                                <input type="email" class="form-control" id="newEmailInput"
+                                    placeholder="new@example.com">
+                            </div>
+                            <button class="btn btn-primary-custom w-100" onclick="updateEmailFinal()">Update
+                                Email</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('partials/footer') %>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+            <script>
+                // Avatar Upload
+                document.getElementById('avatarUpload').addEventListener('change', async function (e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    const formData = new FormData();
+                    formData.append('avatar', file);
+                    try {
+                        const res = await fetch('/upload-avatar', { method: 'POST', body: formData });
+                        const data = await res.json();
+                        if (data.success) document.getElementById('avatarPreview').src = data.path;
+                        else alert(data.message);
+                    } catch (e) { alert('Upload error'); }
+                });
+
+                // Age Edit
+                function toggleAgeEdit() {
+                    document.getElementById('ageDisplayContainer').classList.toggle('d-none');
+                    document.getElementById('ageEditContainer').classList.toggle('d-none');
+                }
+                async function saveAge() {
+                    const age = document.getElementById('ageInput').value;
+                    if (!age || age < 18) return alert("Invalid Age");
+                    try {
+                        const res = await fetch('/update-age', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ age })
+                        });
+                        if ((await res.json()).success) {
+                            document.getElementById('ageText').textContent = age + ' Years';
+                            toggleAgeEdit();
+                        }
+                    } catch (e) { }
+                }
+
+                // --- 3-Step Email Update ---
+                const emailModal = new bootstrap.Modal(document.getElementById('emailModal'));
+
+                function openEmailModal() {
+                    // Reset views
+                    document.getElementById('step1').classList.remove('d-none');
+                    document.getElementById('step2').classList.add('d-none');
+                    document.getElementById('step3').classList.add('d-none');
+                    document.getElementById('otpInput').value = '';
+                    document.getElementById('newEmailInput').value = '';
+                    emailModal.show();
+                }
+
+                async function sendSecurityOTP() {
+                    try {
+                        const res = await fetch('/initiate-email-change', { method: 'POST' });
+                        const data = await res.json();
+                        if (data.success) {
+                            document.getElementById('step1').classList.add('d-none');
+                            document.getElementById('step2').classList.remove('d-none');
+                        } else {
+                            alert(data.message || "Failed to send email. Check Server Console.");
+                        }
+                    } catch (e) {
+                        alert("Server Error");
+                    }
+                }
+
+                async function verifyMyOTP() {
+                    const otp = document.getElementById('otpInput').value;
+                    try {
+                        const res = await fetch('/verify-owner-otp', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ otp })
+                        });
+                        if ((await res.json()).success) {
+                            document.getElementById('step2').classList.add('d-none');
+                            document.getElementById('step3').classList.remove('d-none');
+                        } else {
+                            alert("Invalid OTP");
+                        }
+                    } catch (e) { }
+                }
+
+                async function updateEmailFinal() {
+                    const newEmail = document.getElementById('newEmailInput').value;
+                    if (!newEmail) return alert("Enter email");
+                    try {
+                        const res = await fetch('/finalize-email-update', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ newEmail })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            alert("Email Updated Successfully! Please login with your new email.");
+                            window.location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    } catch (e) { }
+                }
+            </script>
+</body>
+
+</html>

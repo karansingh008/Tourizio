@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Tourizio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <%- include('partials/navbar') %>
+
+        <section class="py-5 mt-5">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h1 class="text-deep-red">Get in Touch</h1>
+                    <p class="lead">We'd love to hear from you.</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4 mb-4">
+                        <div class="contact-card h-100">
+                            <h3>Contact Info</h3>
+                            <p class="mt-4"><i class="fas fa-map-marker-alt text-saffron me-2"></i> Mumbai, India</p>
+                            <p><i class="fas fa-phone text-saffron me-2"></i> +91 98765 43210</p>
+                            <p><i class="fas fa-envelope text-saffron me-2"></i> info@tourizio.in</p>
+                            <hr>
+                            <h5>Follow Us</h5>
+                            <div class="fs-4">
+                                <a href="#" class="text-dark me-3"><i class="fab fa-facebook"></i></a>
+                                <a href="#" class="text-dark me-3"><i class="fab fa-instagram"></i></a>
+                                <a href="#" class="text-dark"><i class="fab fa-twitter"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-8">
+                        <div class="contact-card h-100">
+                            <form action="/contact" method="POST">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Name</label>
+                                        <input type="text" class="form-control" name="name" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" name="email" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Message</label>
+                                        <textarea class="form-control" name="message" rows="5" required></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary-custom">Send Message</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <%- include('partials/footer') %>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="/js/script.js"></script>
+</body>
+
+</html>

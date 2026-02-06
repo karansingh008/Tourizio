@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Signup | Tourizio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .auth-container {
+            max-width: 400px;
+            margin: 100px auto;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: var(--saffron);
+        }
+
+        .nav-pills .nav-link {
+            color: var(--dark-brown);
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('partials/navbar') %>
+
+        <div class="container auth-container">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-4">
+                    <ul class="nav nav-pills nav-fill mb-4" id="authTab" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="login-tab" data-bs-toggle="pill" data-bs-target="#login"
+                                type="button">Login</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="signup-tab" data-bs-toggle="pill" data-bs-target="#signup"
+                                type="button">Sign Up</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="authTabContent">
+                        <!-- Login Form -->
+                        <div class="tab-pane fade show active" id="login">
+                            <form action="/login" method="POST">
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" class="form-control" name="password" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary-custom w-100">Login</button>
+                            </form>
+                        </div>
+
+                        <!-- Signup Form -->
+                        <div class="tab-pane fade" id="signup">
+                            <form action="/signup" method="POST">
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label class="form-label">First Name</label>
+                                        <input type="text" class="form-control" name="firstName" required>
+                                    </div>
+                                    <div class="col">
+                                        <label class="form-label">Last Name</label>
+                                        <input type="text" class="form-control" name="lastName" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" class="form-control" name="password" required>
+                                </div>
+                                <button type="submit" class="btn btn-secondary-custom w-100">Create Account</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="/js/script.js"></script>
+</body>
+
+</html>
