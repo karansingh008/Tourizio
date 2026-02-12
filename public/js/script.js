@@ -104,15 +104,17 @@ const guestDetailsContainer = document.getElementById('guestDetailsContainer');
 const today = new Date().toISOString().split('T')[0];
 if (checkin) checkin.setAttribute('min', today);
 
-checkin.addEventListener('change', () => {
-    if (checkin.value) {
-        checkout.removeAttribute('disabled');
-        checkout.setAttribute('min', checkin.value);
-        if (checkout.value && checkout.value < checkin.value) {
-            checkout.value = checkin.value;
+if (checkin) {
+    checkin.addEventListener('change', () => {
+        if (checkin.value) {
+            checkout.removeAttribute('disabled');
+            checkout.setAttribute('min', checkin.value);
+            if (checkout.value && checkout.value < checkin.value) {
+                checkout.value = checkin.value;
+            }
         }
-    }
-});
+    });
+}
 
 function generateGuestFields() {
     if (!guestDetailsContainer) return;
