@@ -436,23 +436,31 @@ async function submitFinalBooking(e) {
     };
 
     //Simulate API call
-    await fetch('/booking', {
+    const response = await fetch('/booking', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bookingData)
     });
 
-    //Show Success Modal
-    const successModalElement = document.getElementById('successModal');
-    if (successModalElement) {
-        const successMessage = document.getElementById('successMessage');
-        successMessage.textContent = 'Booking Paid & Confirmed!';
-        const modal = new bootstrap.Modal(successModalElement);
-        modal.show();
+    if (response.ok) {
+        //Show Success Modal
+        const successModalElement = document.getElementById('successModal');
+        if (successModalElement) {
+            const successMessage = document.getElementById('successMessage');
+            successMessage.textContent = 'Booking Paid & Confirmed!';
+            const modal = new bootstrap.Modal(successModalElement);
+            modal.show();
 
-        //Redirect after a moment
-        setTimeout(() => {
-            window.location.href = '/';
-        }, 2000);
+            //Redirect after a moment
+            setTimeout(() => {
+                window.location.href = '/my-bookings'; // Redirect to bookings page to see it
+            }, 2000);
+        } else {
+            alert("Booking Successful!");
+            window.location.href = '/my-bookings';
+        }
+    } else {
+        const errorText = await response.text();
+        alert("Booking Failed: " + errorText);
     }
 }

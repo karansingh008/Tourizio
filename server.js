@@ -9,11 +9,13 @@ const fs = require('fs');
 
 const app = express();
 
+
 // 1. DATABASE CONNECTION
-mongoose.connect('mongodb://127.0.0.1:27017/tourizio', {
+const dbUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/tourizio';
+mongoose.connect(dbUrl, {
     serverSelectionTimeoutMS: 5000
 }).then(() => {
-    console.log("DB Connected");
+    console.log("DB Connected to:", dbUrl.includes('127.0.0.1') ? 'Localhost' : 'Cloud');
 }).catch((err) => {
     console.log("DB Connection Failed:", err.message);
 });
@@ -26,10 +28,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Session
 app.use(session({
-    secret: 'tourizio_secret_key',
+    secret: process.env.SESSION_SECRET || 'tourizio_secret_key',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false }
+    cookie: { secure: process.env.NODE_ENV === 'production' } // Secure in production
 }));
 
 // Make user available to views
@@ -75,8 +77,8 @@ const upload = multer({
 let transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'YOUR_GMAIL_ADDRESS', // <--- REPLACE WITH YOUR GMAIL
-        pass: 'YOUR_APP_PASSWORD'   // <--- REPLACE WITH YOUR APP PASSWORD
+        user: process.env.GMAIL_USER || 'YOUR_GMAIL_ADDRESS',
+        pass: process.env.GMAIL_APP_PASSWORD || 'YOUR_APP_PASSWORD'
     }
 });
 
@@ -312,6 +314,8 @@ app.post('/cancel-booking', isAuthenticated, async (req, res) => {
 
 app.post('/booking', isAuthenticated, async (req, res) => {
     try {
+        console.log("Received Booking Data:", req.body); // Debugging
+
         // Validation
         if (!req.body.destination || !req.body.checkin || !req.body.checkout) {
             return res.status(400).send("Missing Details");
@@ -322,13 +326,20 @@ app.post('/booking', isAuthenticated, async (req, res) => {
 
         const newBooking = new Booking({
             user: req.session.user._id,
-            ...req.body,
-            guestsCount: req.body.guestsCount
+            destination: req.body.destination,
+            checkIn: req.body.checkin,   // Map checkin -> checkIn
+            checkOut: req.body.checkout, // Map checkout -> checkOut
+            guestsCount: req.body.guestsCount,
+            totalCost: req.body.total,   // Map total -> totalCost
+            guests: req.body.guests
         });
+
         await newBooking.save();
+        console.log("Booking Saved:", newBooking);
         res.status(200).send('OK');
     } catch (e) {
-        res.status(500).send("Error");
+        console.error("Booking Error:", e);
+        res.status(500).send("Error: " + e.message);
     }
 });
 
